@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+  <html>
+    <head>
+      <title> My first leaflet map </title>
+      <link rel="stylesheet" href="https://unpkg.com/leaflet@1.2.0/dist/leaflet.css" />
+      <link rel="stylesheet" href="main.css"/>
+    </head>
+  <body>
+    <H1>Example</H1>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet@1.2.0/dist/leaflet.js"></script>
+    <script>
+      //initialize the map         
+//      var map = L.map('map').setView([42.3600825, -71.0588801], 12);
+      var map = L.map('map').setView([33.765152, -117.960504], 13);
+      
+      //Create baselayer - tiles
+      //'http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png'
+      var backgroundMap = L.tileLayer('http://tile.stamen.com/watercolor/{z}/{x}/{y}.jpg',{
+        attribution: '<a href="http://openstreetmap.org">OpenStreetMap</a>contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>',
+        maxZoom: 19
+        }
+      );
+      
+      backgroundMap.addTo(map);
+
+      var city_hall = L.marker([33.775667, -117.936803]).addTo(map);
+      var popup_ch = "City Hall";
+      city_hall.bindPopup(popup_ch); 
+
+      var ha_noi = L.marker([33.773593, -117.983546]).addTo(map);
+      var popup_hn = "Ha Noi Corner";
+      ha_noi.bindPopup(popup_hn); 
+
+
+      var pho_lu = L.marker([33.759799, -117.951733]).addTo(map);
+      var popup_pl = "Pho Lu";
+      pho_lu.bindPopup(popup_pl); 
+
+
+      var song_long = L.marker([33.745141, -117.965681]).addTo(map);
+      var popup_sl = "Song Long";
+      song_long.bindPopup(popup_sl); 
+      
+      var banh_bao = L.marker([33.773216, -117.938693]).addTo(map);
+      var popup_bb = "Banh Bao";
+      banh_bao.bindPopup(popup_bb); 
+
+      var circle = L.circle([33.775667, -117.936803], 500, {
+        color: 'blue',
+        fillColor: 'blue',
+        fillOpacity: 0.25
+      }).addTo(map);
+
+      //add a polygon   
+      var polygon = L.polygon([
+        [33.775667, -117.936803],
+        [33.773216, -117.938693],
+	[33.759799, -117.951733],
+	[33.745141, -117.965681],
+	[33.773593, -117.983546]
+      ], { 
+        color: 'blue',
+        fillColor: 'blue',
+        fillOpacity: 0.25
+      }).addTo(map);
+
+      // Create a marker first
+      var geojsonMarkerOptions = {
+        radius: 8,
+        fillColor: "#ff7800",
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      };
+      
+      //create a empty geojson layer
+      var geojson = L.geoJson(null,{
+        pointToLayer: function (feature, latlng) {
+          return L.circleMarker(latlng, geojsonMarkerOptions);
+        }
+      }).addTo(map);
+
+      // new Http Request
+      var xhttp = new XMLHttpRequest();
+      
+      // set the request method and data file
+      xhttp.open('GET', encodeURI("All_BFRO_Reports_points.geojson"));
+      
+      //specify what must be done with the geojson data to the layer when request is succesfull
+      xhttp.onload = function() {
+        if (xhttp.readyState === 4) {
+            // add the json data to the geojson layer we created before!
+            geojson.addData(JSON.parse(xhttp.responseText));
+          } else {
+            alert('Request failed.  Returned status of ' + xhttp.status);
+          }
+      };
+      
+      // send the request
+      xhttp.send();
+
+    </script>
+  </body>
+</html>
